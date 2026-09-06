@@ -1,0 +1,739 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Bhushan Phirke — Computer Engineering Student</title>
+<meta name="description" content="Portfolio of Bhushan Phirke — Computer Engineering student at MIT AOE, Alandi. Backend development, DSA, and systems projects.">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+
+<style>
+  :root{
+    --bg:#0A1628;
+    --bg-2:#0D1F38;
+    --surface:#0F2540;
+    --line:rgba(140,190,255,0.09);
+    --border:rgba(140,190,255,0.22);
+    --ink:#E7F0FA;
+    --ink-dim:#7E96B4;
+    --accent:#FF8A5B;
+    --accent-dim:rgba(255,138,91,0.15);
+    --blue:#7FC4FF;
+    --mono:'IBM Plex Mono', ui-monospace, monospace;
+    --head:'Space Grotesk', sans-serif;
+    --body:'IBM Plex Sans', sans-serif;
+  }
+
+  *{margin:0;padding:0;box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{
+    background:
+      linear-gradient(var(--line) 1px, transparent 1px) 0 0/48px 48px,
+      linear-gradient(90deg, var(--line) 1px, transparent 1px) 0 0/48px 48px,
+      var(--bg);
+    color:var(--ink);
+    font-family:var(--body);
+    line-height:1.65;
+    overflow-x:hidden;
+  }
+
+  ::selection{background:var(--accent-dim);color:var(--accent);}
+  a{color:var(--blue);text-decoration:none;}
+  a:hover{text-decoration:underline;}
+  ::-webkit-scrollbar{width:10px;}
+  ::-webkit-scrollbar-track{background:var(--bg);}
+  ::-webkit-scrollbar-thumb{background:var(--surface);border:1px solid var(--border);}
+
+  .wrap{max-width:980px;margin:0 auto;padding:0 24px;}
+
+  .label{
+    font-family:var(--head);
+    font-size:12px;
+    letter-spacing:0.14em;
+    text-transform:uppercase;
+    color:var(--accent);
+  }
+
+  h1,h2,h3{font-family:var(--head);color:var(--ink);}
+
+
+  .panel{
+    position:relative;
+    background:var(--surface);
+    border:1px solid var(--border);
+  }
+  .panel .corner{
+    position:absolute;
+    width:14px;height:14px;
+    border-color:var(--accent);
+    opacity:0;
+    transform:scale(0.4);
+  }
+  .panel .corner.tl{top:-1px;left:-1px;border-top:2px solid;border-left:2px solid;}
+  .panel .corner.tr{top:-1px;right:-1px;border-top:2px solid;border-right:2px solid;}
+  .panel .corner.bl{bottom:-1px;left:-1px;border-bottom:2px solid;border-left:2px solid;}
+  .panel .corner.br{bottom:-1px;right:-1px;border-bottom:2px solid;border-right:2px solid;}
+  .panel.armed .corner{opacity:1;transform:scale(1);transition:opacity .4s, transform .4s;}
+
+ 
+  header{
+    position:fixed;top:0;left:0;right:0;z-index:100;
+    background:rgba(10,22,40,0.88);
+    backdrop-filter:blur(10px);
+    border-bottom:1px solid var(--border);
+  }
+  .titleblock{
+    max-width:980px;margin:0 auto;padding:0 24px;
+    display:flex;align-items:center;justify-content:space-between;
+    height:60px;
+  }
+  .tb-name{font-family:var(--head);font-weight:600;font-size:15px;color:var(--ink);}
+  .tb-meta{display:flex;gap:0;font-family:var(--mono);font-size:11px;color:var(--ink-dim);}
+  .tb-meta span{padding:0 14px;border-left:1px solid var(--border);}
+  .tb-meta span:first-child{border-left:none;}
+  .navlinks{display:flex;gap:26px;list-style:none;}
+  .navlinks a{font-family:var(--head);font-size:13px;color:var(--ink-dim);letter-spacing:0.02em;}
+  .navlinks a:hover{color:var(--accent);text-decoration:none;}
+  .menu-btn{display:none;background:none;border:1px solid var(--border);color:var(--ink);font-size:18px;padding:6px 10px;cursor:pointer;}
+
+  @media(max-width:760px){
+    .tb-meta{display:none;}
+    .navlinks{display:none;}
+    .menu-btn{display:block;}
+    .navlinks.open{
+      display:flex;flex-direction:column;position:absolute;top:60px;right:24px;
+      background:var(--surface);border:1px solid var(--border);padding:14px 20px;gap:12px;
+    }
+  }
+
+  /* ---------- Hero / photo assembly ---------- */
+  .hero{
+    min-height:100vh;
+    display:flex;flex-direction:column;justify-content:center;
+    padding-top:110px;padding-bottom:60px;
+  }
+  .hero-top{text-align:center;margin-bottom:10px;}
+  .hero-top .label{display:block;margin-bottom:10px;}
+  .hero-top h1{
+    font-size:clamp(30px,5.5vw,50px);
+    font-weight:600;
+  }
+
+  .assembly{
+    position:relative;
+    width:100%;
+    max-width:1000px;
+    aspect-ratio:1000/560;
+    margin:20px auto 0;
+  }
+  .assembly svg{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;}
+  .assembly svg path{
+    fill:none;stroke:var(--border);stroke-width:1.5;
+  }
+  .photo-port{
+    position:absolute;
+    top:50%;left:50%;
+    transform:translate(-50%,-50%) scale(0.85);
+    width:210px;height:210px;
+    border-radius:50%;
+    overflow:hidden;
+    border:2px solid var(--accent);
+    box-shadow:0 0 0 6px rgba(255,138,91,0.08), 0 0 40px rgba(255,138,91,0.12);
+    opacity:0;
+    background:var(--bg-2);
+  }
+  .photo-port img{width:100%;height:100%;object-fit:cover;display:block;}
+
+  .leader{
+    position:absolute;
+    width:170px;
+    opacity:0;
+  }
+  .leader .label{display:block;font-size:11px;margin-bottom:4px;}
+  .leader .val{font-size:13.5px;color:var(--ink-dim);}
+  .leader.a{top:22%;left:0;text-align:left;}
+  .leader.b{top:22%;right:0;text-align:right;}
+  .leader.c{bottom:20%;left:0;text-align:left;}
+  .leader.d{bottom:20%;right:0;text-align:right;}
+  @media(max-width:760px){
+    .leader{position:static;width:auto;opacity:1 !important;text-align:center !important;margin-bottom:14px;}
+    .assembly{aspect-ratio:auto;display:flex;flex-direction:column;align-items:center;gap:6px;}
+    .assembly svg{display:none;}
+    .photo-port{position:static;transform:none !important;opacity:1 !important;margin-bottom:18px;}
+  }
+
+  .hero-desc{
+    max-width:56ch;margin:34px auto 0;text-align:center;
+    color:var(--ink-dim);font-size:15.5px;
+  }
+  .hero-links{
+    display:flex;justify-content:center;gap:14px;flex-wrap:wrap;margin-top:26px;
+  }
+  .btn{
+    font-family:var(--head);font-size:13.5px;font-weight:500;
+    padding:11px 20px;border:1px solid var(--border);color:var(--ink);
+    display:inline-flex;align-items:center;gap:8px;
+    transition:border-color .2s, color .2s, transform .2s;
+  }
+  .btn:hover{border-color:var(--accent);color:var(--accent);text-decoration:none;transform:translateY(-2px);}
+  .btn.primary{background:var(--accent);color:#1A0F08;border-color:var(--accent);}
+  .btn.primary:hover{color:#1A0F08;filter:brightness(1.08);}
+
+  /* ---------- Section shell ---------- */
+  section{padding:90px 0;}
+  .sec-head{margin-bottom:34px;display:flex;align-items:baseline;justify-content:space-between;flex-wrap:wrap;gap:10px;border-bottom:1px solid var(--border);padding-bottom:16px;}
+  .sec-head h2{font-size:clamp(22px,3.2vw,28px);font-weight:600;}
+  .sec-head .sheet{font-family:var(--mono);font-size:11px;color:var(--ink-dim);}
+  .underline{height:2px;background:var(--accent);width:0;margin-top:-17px;margin-bottom:16px;}
+
+  /* ---------- Education ---------- */
+  .spec-row{
+    display:flex;gap:18px;padding:12px 0;border-bottom:1px dashed var(--border);
+    font-size:14.5px;
+  }
+  .spec-row:last-child{border-bottom:none;}
+  .spec-row .k{font-family:var(--head);min-width:130px;color:var(--accent);font-size:13px;}
+  .spec-row .v{color:var(--ink);}
+
+  /* ---------- Skills ---------- */
+  .skill-groups{display:flex;flex-direction:column;gap:24px;}
+  .skill-group .glabel{font-family:var(--head);font-size:12.5px;color:var(--ink-dim);margin-bottom:12px;}
+  .tag-row{display:flex;flex-wrap:wrap;gap:10px;}
+  .tag{
+    font-family:var(--mono);font-size:13px;padding:8px 14px;
+    background:var(--bg-2);border:1px solid var(--border);color:var(--ink);
+    opacity:0;transform:translateY(10px) scale(0.94);
+  }
+
+  /* ---------- Coding activity / gauge cards ---------- */
+  .stat-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:16px;}
+  .stat-card{padding:22px;}
+  .stat-card .plat{display:flex;justify-content:space-between;align-items:center;font-family:var(--head);font-size:13.5px;color:var(--ink-dim);margin-bottom:16px;}
+  .stat-card .plat a{font-size:11px;color:var(--ink-dim);}
+  .stat-main{font-family:var(--head);font-size:34px;font-weight:700;color:var(--accent);line-height:1;}
+  .stat-sub{font-size:12.5px;color:var(--ink-dim);margin-top:8px;}
+  .stat-breakdown{display:flex;gap:14px;margin-top:16px;font-family:var(--mono);font-size:11.5px;}
+  .stat-breakdown span b{display:block;font-size:15px;}
+  .b-easy b{color:var(--blue);}
+  .b-med b{color:var(--accent);}
+  .b-hard b{color:#FF6B6B;}
+  .stat-loading{color:var(--ink-dim);font-family:var(--mono);font-size:12.5px;}
+
+  /* ---------- Projects ---------- */
+  .project{margin-bottom:22px;padding:26px 28px;}
+  .project-head{display:flex;justify-content:space-between;align-items:flex-start;gap:16px;cursor:pointer;}
+  .project-head h3{font-size:18px;margin-bottom:8px;}
+  .project-head .tagline{color:var(--ink-dim);font-size:14px;max-width:60ch;}
+  .project-toggle{font-family:var(--head);color:var(--accent);font-size:22px;flex-shrink:0;transition:transform .3s;}
+  .project.open .project-toggle{transform:rotate(45deg);}
+  .project-body{max-height:0;overflow:hidden;transition:max-height .45s ease;}
+  .project.open .project-body{max-height:600px;}
+  .project-body-inner{padding-top:20px;border-top:1px dashed var(--border);margin-top:20px;}
+  .project ul{padding-left:20px;color:var(--ink-dim);font-size:14.5px;}
+  .project ul li{margin-bottom:9px;}
+  .project ul li::marker{color:var(--accent);}
+  .stack-row{display:flex;flex-wrap:wrap;gap:8px;margin-top:16px;}
+  .stack-row .tag{font-size:12px;padding:6px 11px;opacity:1;transform:none;}
+
+  /* ---------- Contact ---------- */
+  form{display:flex;flex-direction:column;gap:18px;padding:26px 28px;}
+  .field label{font-family:var(--head);font-size:12px;color:var(--ink-dim);display:block;margin-bottom:8px;letter-spacing:0.04em;}
+  .field input, .field textarea{
+    width:100%;background:var(--bg-2);border:1px solid var(--border);
+    padding:12px 14px;color:var(--ink);font-family:var(--body);font-size:14.5px;
+    resize:vertical;transition:border-color .2s;
+  }
+  .field input:focus, .field textarea:focus{outline:none;border-color:var(--accent);}
+  .field textarea{min-height:120px;}
+  .submit-row{display:flex;align-items:center;gap:16px;position:relative;}
+  #form-status{font-family:var(--mono);font-size:13px;}
+  #form-status.ok{color:var(--blue);}
+  #form-status.err{color:#FF6B6B;}
+  .signal-line{
+    position:absolute;left:0;bottom:-14px;height:2px;background:var(--accent);width:0;
+  }
+
+  footer{border-top:1px solid var(--border);padding:36px 0;text-align:center;color:var(--ink-dim);font-family:var(--mono);font-size:12px;}
+  footer a{color:var(--ink-dim);}
+  footer a:hover{color:var(--accent);}
+
+  @media (prefers-reduced-motion: reduce){
+    *{animation-duration:0.01ms !important;transition-duration:0.01ms !important;}
+  }
+  a:focus-visible, button:focus-visible, input:focus-visible, textarea:focus-visible{
+    outline:2px solid var(--accent);outline-offset:2px;
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="titleblock">
+    <div class="tb-name">Bhushan Phirke</div>
+    <div class="tb-meta">
+      <span>DWG. BP&#8209;2026</span>
+      <span>SCALE 1:1</span>
+      <span>SHEET 01/05</span>
+    </div>
+    <ul class="navlinks" id="navlinks">
+      <li><a href="#about">About</a></li>
+      <li><a href="#skills">Skills</a></li>
+      <li><a href="#activity">Activity</a></li>
+      <li><a href="#projects">Projects</a></li>
+      <li><a href="#contact">Contact</a></li>
+    </ul>
+    <button class="menu-btn" id="menu-btn" aria-label="Toggle menu">☰</button>
+  </div>
+</header>
+
+<!-- ============ HERO / PHOTO ASSEMBLY ============ -->
+<section class="hero">
+  <div class="wrap">
+    <div class="hero-top">
+      <span class="label">Computer Engineering &middot; MIT AOE, Alandi</span>
+      <h1>Bhushan Phirke</h1>
+    </div>
+
+    <div class="assembly" id="assembly">
+      <svg viewBox="0 0 1000 560" preserveAspectRatio="xMidYMid meet">
+        <path id="leader-a" d="M426,206 L260,206 L260,140 L100,140"/>
+        <path id="leader-b" d="M574,206 L740,206 L740,140 L900,140"/>
+        <path id="leader-c" d="M426,354 L260,354 L260,420 L100,420"/>
+        <path id="leader-d" d="M574,354 L740,354 L740,420 L900,420"/>
+      </svg>
+
+      <div class="photo-port" id="photo-port">
+        <img id="profile-photo" src="assets/photo.jpg" alt="Bhushan Phirke"
+             onerror="this.onerror=null;this.src=window.PLACEHOLDER_PHOTO;">
+      </div>
+
+      <div class="leader a">
+        <span class="label">Role</span>
+        <span class="val">2nd Year Engineering Student</span>
+      </div>
+      <div class="leader b">
+        <span class="label">Institute</span>
+        <span class="val">MIT AOE, Alandi</span>
+      </div>
+      <div class="leader c">
+        <span class="label">Focus</span>
+        <span class="val">Backend systems &amp; DSA in C++</span>
+      </div>
+      <div class="leader d">
+        <span class="label">Status</span>
+        <span class="val">Open to internships</span>
+      </div>
+    </div>
+
+    <p class="hero-desc">
+      I build backend systems and solve DSA problems in C++, and I like turning real
+      campus problems — attendance, classroom displays — into working software.
+    </p>
+    <div class="hero-links">
+      <a class="btn primary" href="#projects">View Projects</a>
+      <a class="btn" href="#contact">Get In Touch</a>
+      <a class="btn" href="https://github.com/bhushanphirke" target="_blank" rel="noopener">GitHub</a>
+      <a class="btn" href="https://www.linkedin.com/in/bhushan-phirke/" target="_blank" rel="noopener">LinkedIn</a>
+    </div>
+  </div>
+</section>
+
+<!-- ============ ABOUT / EDUCATION ============ -->
+<section id="about">
+  <div class="wrap">
+    <div class="sec-head">
+      <h2>Education</h2>
+      <span class="sheet">SHEET 02/05</span>
+    </div>
+    <div class="underline" data-underline></div>
+    <div class="panel reveal-panel">
+      <div style="padding:26px 28px;">
+        <div class="spec-row"><span class="k">Institute</span><span class="v">MIT Academy of Engineering, Alandi</span></div>
+        <div class="spec-row"><span class="k">Branch</span><span class="v">Computer Engineering</span></div>
+        <div class="spec-row"><span class="k">Year</span><span class="v">2nd Year</span></div>
+        <div class="spec-row"><span class="k">Focus areas</span><span class="v">Backend development, DSA, database systems</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ SKILLS ============ -->
+<section id="skills">
+  <div class="wrap">
+    <div class="sec-head">
+      <h2>Skills</h2>
+      <span class="sheet">SHEET 03/05</span>
+    </div>
+    <div class="underline" data-underline></div>
+    <div class="panel reveal-panel">
+      <div style="padding:26px 28px;">
+        <div class="skill-groups">
+          <div class="skill-group">
+            <div class="glabel">Frontend</div>
+            <div class="tag-row skill-tags"><span class="tag">HTML</span><span class="tag">CSS</span></div>
+          </div>
+          <div class="skill-group">
+            <div class="glabel">Backend</div>
+            <div class="tag-row skill-tags"><span class="tag">Node.js</span><span class="tag">Express.js</span></div>
+          </div>
+          <div class="skill-group">
+            <div class="glabel">Database</div>
+            <div class="tag-row skill-tags"><span class="tag">MongoDB</span></div>
+          </div>
+          <div class="skill-group">
+            <div class="glabel">DSA</div>
+            <div class="tag-row skill-tags"><span class="tag">C++</span><span class="tag">Data Structures</span><span class="tag">Algorithms</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ CODING ACTIVITY ============ -->
+<section id="activity">
+  <div class="wrap">
+    <div class="sec-head">
+      <h2>Coding Activity</h2>
+      <span class="sheet">SHEET 04/05</span>
+    </div>
+    <div class="underline" data-underline></div>
+    <div class="stat-grid">
+
+      <div class="panel stat-card reveal-panel" id="card-leetcode">
+        <div class="plat"><span>LeetCode</span><a href="https://leetcode.com/u/BHUSHAN157/" target="_blank" rel="noopener">profile &#8599;</a></div>
+        <div class="stat-loading" id="leetcode-body">loading stats&hellip;</div>
+      </div>
+
+      <div class="panel stat-card reveal-panel" id="card-github">
+        <div class="plat"><span>GitHub</span><a href="https://github.com/bhushanphirke" target="_blank" rel="noopener">profile &#8599;</a></div>
+        <div class="stat-loading" id="github-body">loading stats&hellip;</div>
+      </div>
+
+      <div class="panel stat-card reveal-panel">
+        <div class="plat"><span>Code360</span><a href="https://www.naukri.com/code360/profile/BhushanP" target="_blank" rel="noopener">profile &#8599;</a></div>
+        <div class="stat-sub">Practicing DSA &amp; problem solving on Coding Ninjas / Code360.</div>
+      </div>
+
+      <div class="panel stat-card reveal-panel">
+        <div class="plat"><span>Codolio</span><a href="https://codolio.com/profile/Bhushan157" target="_blank" rel="noopener">profile &#8599;</a></div>
+        <div class="stat-sub">Unified tracker for all coding profiles &amp; contests.</div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ============ PROJECTS ============ -->
+<section id="projects">
+  <div class="wrap">
+    <div class="sec-head">
+      <h2>Projects</h2>
+      <span class="sheet">SHEET 05/05</span>
+    </div>
+    <div class="underline" data-underline></div>
+
+    <div class="panel project reveal-panel" id="proj-1">
+      <div class="project-head" onclick="toggleProject('proj-1')">
+        <div>
+          <h3>Smart Attendance Management System</h3>
+          <p class="tagline">Role-based attendance platform for students, teachers, and admins with automated absence emails and PDF attendance records.</p>
+        </div>
+        <span class="project-toggle">+</span>
+      </div>
+      <div class="project-body">
+        <div class="project-body-inner">
+          <ul>
+            <li>Separate dashboards for students, teachers, and admins — students view attendance, teachers mark it, admins onboard students and teachers.</li>
+            <li>Attendance records can be exported as PDF for any custom start and end date range.</li>
+            <li>Teachers can send absence-notification emails to students directly from the dashboard with one click, powered by Azure Function App for mail delivery.</li>
+            <li>Attendance is tracked per subject, so each subject maintains its own independent record.</li>
+          </ul>
+          <div class="stack-row">
+            <span class="tag">Node.js</span><span class="tag">Express.js</span><span class="tag">MongoDB</span>
+            <span class="tag">Azure Functions</span><span class="tag">HTML/CSS</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="panel project reveal-panel" id="proj-2">
+      <div class="project-head" onclick="toggleProject('proj-2')">
+        <div>
+          <h3>InfoX — Smart Matrix Display System</h3>
+          <p class="tagline">Real-time classroom matrix display that syncs timetables, lecture reminders, and live announcements.</p>
+        </div>
+        <span class="project-toggle">+</span>
+      </div>
+      <div class="project-body">
+        <div class="project-body-inner">
+          <ul>
+            <li>RTC module senses real-time clock data to keep the classroom matrix display in sync with the actual schedule.</li>
+            <li>A dedicated companion app lets staff update the timetable, which is then reflected on the matrix display automatically.</li>
+            <li>Integrated notification system alerts teachers 10 minutes before their lecture is due to start.</li>
+            <li>Built-in real-time announcement system for classroom-wide updates.</li>
+          </ul>
+          <div class="stack-row">
+            <span class="tag">Embedded Systems</span><span class="tag">RTC Module</span><span class="tag">Real-time Sync</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ CONTACT ============ -->
+<section id="contact">
+  <div class="wrap">
+    <div class="sec-head">
+      <h2>Get In Touch</h2>
+      <span class="sheet">TRANSMIT</span>
+    </div>
+    <div class="underline" data-underline></div>
+    <div class="panel reveal-panel">
+      <form id="contact-form">
+        <div class="field">
+          <label for="name">Name</label>
+          <input type="text" id="name" name="name" required maxlength="80" placeholder="Your name">
+        </div>
+        <div class="field">
+          <label for="email">Email</label>
+          <input type="email" id="email" name="email" required maxlength="120" placeholder="you@example.com">
+        </div>
+        <div class="field">
+          <label for="message">Message</label>
+          <textarea id="message" name="message" required maxlength="2000" placeholder="What would you like to talk about?"></textarea>
+        </div>
+        <div class="submit-row">
+          <button type="submit" class="btn primary" id="submit-btn">Send Message</button>
+          <span id="form-status"></span>
+          <span class="signal-line" id="signal-line"></span>
+        </div>
+      </form>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <p>&copy; <span id="year"></span> Bhushan Phirke — built with HTML, CSS, JS &amp; GSAP</p>
+    <p style="margin-top:8px;">
+      <a href="https://github.com/bhushanphirke" target="_blank" rel="noopener">GitHub</a> ·
+      <a href="https://www.linkedin.com/in/bhushan-phirke/" target="_blank" rel="noopener">LinkedIn</a> ·
+      <a href="https://leetcode.com/u/BHUSHAN157/" target="_blank" rel="noopener">LeetCode</a> ·
+      <a href="https://codolio.com/profile/Bhushan157" target="_blank" rel="noopener">Codolio</a>
+    </p>
+  </div>
+</footer>
+
+<script>
+window.PLACEHOLDER_PHOTO = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 200'%3E%3Crect width='200' height='200' fill='%230F2540'/%3E%3Ccircle cx='100' cy='78' r='36' fill='none' stroke='%237E96B4' stroke-width='3'/%3E%3Cpath d='M36 172 Q100 108 164 172' fill='none' stroke='%237E96B4' stroke-width='3'/%3E%3C/svg%3E";
+
+document.getElementById('year').textContent = new Date().getFullYear();
+
+/* mobile nav toggle */
+document.getElementById('menu-btn').addEventListener('click', () => {
+  document.getElementById('navlinks').classList.toggle('open');
+});
+document.querySelectorAll('#navlinks a').forEach(a => a.addEventListener('click', () => {
+  document.getElementById('navlinks').classList.remove('open');
+}));
+
+/* project accordion */
+function toggleProject(id){
+  const el = document.getElementById(id);
+  const wasOpen = el.classList.contains('open');
+  document.querySelectorAll('.project.open').forEach(p => p.classList.remove('open'));
+  if(!wasOpen) el.classList.add('open');
+}
+
+/* =====================================================
+   GSAP + ScrollTrigger
+===================================================== */
+gsap.registerPlugin(ScrollTrigger);
+
+/* ---- prep leader line paths: measure & set dash arrays ---- */
+const leaderPaths = ['leader-a','leader-b','leader-c','leader-d'].map(id => document.getElementById(id));
+leaderPaths.forEach(p => {
+  const len = p.getTotalLength();
+  p.style.strokeDasharray = len;
+  p.style.strokeDashoffset = len;
+});
+
+const mm = gsap.matchMedia();
+
+/* ---- Desktop: pinned hero assembly sequence ---- */
+mm.add("(min-width: 761px)", () => {
+  const heroTl = gsap.timeline({
+    scrollTrigger: {
+      trigger: "#assembly",
+      start: "top 75%",
+      end: "top 20%",
+      scrub: 0.6
+    }
+  });
+
+  heroTl
+    .to("#photo-port", { opacity: 1, scale: 1, duration: 1, ease: "power2.out" }, 0)
+    .to(leaderPaths, { strokeDashoffset: 0, duration: 1, stagger: 0.12, ease: "none" }, 0.05)
+    .to(".leader.a, .leader.b", { opacity: 1, duration: 0.6 }, 0.35)
+    .to(".leader.c, .leader.d", { opacity: 1, duration: 0.6 }, 0.55);
+
+  return () => heroTl.kill();
+});
+
+/* ---- Mobile: simple fade-in for the assembly (pin/scrub disabled) ---- */
+mm.add("(max-width: 760px)", () => {
+  gsap.set("#photo-port", { opacity: 1, scale: 1 });
+  gsap.set(".leader", { opacity: 1 });
+});
+
+/* ---- Section title underlines draw in on scroll ---- */
+document.querySelectorAll('[data-underline]').forEach(u => {
+  gsap.to(u, {
+    width: "72px",
+    duration: 0.6,
+    ease: "power2.out",
+    scrollTrigger: { trigger: u, start: "top 85%", once: true }
+  });
+});
+
+/* ---- Panels: corner brackets arm + rise in ---- */
+document.querySelectorAll('.reveal-panel').forEach(panel => {
+  gsap.set(panel, { opacity: 0, y: 26 });
+  ScrollTrigger.create({
+    trigger: panel,
+    start: "top 85%",
+    once: true,
+    onEnter: () => {
+      gsap.to(panel, { opacity: 1, y: 0, duration: 0.55, ease: "power2.out" });
+      gsap.delayedCall(0.25, () => panel.classList.add('armed'));
+    }
+  });
+});
+
+/* ---- Skill tags: staggered pop-in ---- */
+document.querySelectorAll('.skill-tags').forEach(row => {
+  ScrollTrigger.create({
+    trigger: row,
+    start: "top 88%",
+    once: true,
+    onEnter: () => {
+      gsap.to(row.querySelectorAll('.tag'), {
+        opacity: 1, y: 0, scale: 1, duration: 0.45, stagger: 0.06, ease: "back.out(2)"
+      });
+    }
+  });
+});
+
+/* ---- Stat number count-up once data loads & card is visible ---- */
+function animateCountUp(el, target, suffix = '') {
+  const obj = { v: 0 };
+  gsap.to(obj, {
+    v: target,
+    duration: 1.1,
+    ease: "power1.out",
+    onUpdate: () => { el.textContent = Math.floor(obj.v) + suffix; }
+  });
+}
+
+/* ---------------- Live coding stats ---------------- */
+async function loadLeetCode(){
+  const el = document.getElementById('leetcode-body');
+  try{
+    const res = await fetch('https://leetcode-stats-api.herokuapp.com/BHUSHAN157');
+    if(!res.ok) throw new Error('bad response');
+    const data = await res.json();
+    if(data.status !== 'success') throw new Error('not found');
+    el.innerHTML = `
+      <div class="stat-main" id="lc-total">0</div>
+      <div class="stat-sub">problems solved &middot; rank ${data.ranking ? data.ranking.toLocaleString() : '&mdash;'}</div>
+      <div class="stat-breakdown">
+        <span class="b-easy">Easy<b>${data.easySolved}</b></span>
+        <span class="b-med">Med<b>${data.mediumSolved}</b></span>
+        <span class="b-hard">Hard<b>${data.hardSolved}</b></span>
+      </div>
+    `;
+    ScrollTrigger.create({
+      trigger: '#card-leetcode', start: "top 85%", once: true,
+      onEnter: () => animateCountUp(document.getElementById('lc-total'), data.totalSolved)
+    });
+  }catch(e){
+    el.innerHTML = '<div class="stat-sub">Live stats unavailable right now — check the profile link above.</div>';
+  }
+}
+
+async function loadGitHub(){
+  const el = document.getElementById('github-body');
+  try{
+    const res = await fetch('https://api.github.com/users/bhushanphirke');
+    if(!res.ok) throw new Error('bad response');
+    const data = await res.json();
+    el.innerHTML = `
+      <div class="stat-main" id="gh-total">0</div>
+      <div class="stat-sub">public repositories &middot; ${data.followers} followers</div>
+    `;
+    ScrollTrigger.create({
+      trigger: '#card-github', start: "top 85%", once: true,
+      onEnter: () => animateCountUp(document.getElementById('gh-total'), data.public_repos)
+    });
+  }catch(e){
+    el.innerHTML = '<div class="stat-sub">Live stats unavailable right now — check the profile link above.</div>';
+  }
+}
+
+loadLeetCode();
+loadGitHub();
+
+/* ---------------- Contact form ---------------- */
+const API_BASE = window.PORTFOLIO_API_BASE || 'http://localhost:5000';
+
+document.getElementById('contact-form').addEventListener('submit', async (e) => {
+  e.preventDefault();
+  const btn = document.getElementById('submit-btn');
+  const status = document.getElementById('form-status');
+  const signal = document.getElementById('signal-line');
+  const payload = {
+    name: document.getElementById('name').value.trim(),
+    email: document.getElementById('email').value.trim(),
+    message: document.getElementById('message').value.trim()
+  };
+
+  btn.disabled = true;
+  btn.textContent = 'Sending...';
+  status.textContent = '';
+  status.className = '';
+  gsap.to(signal, { width: '60%', duration: 0.8, ease: "power2.inOut" });
+
+  try{
+    const res = await fetch(`${API_BASE}/api/contact`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload)
+    });
+    const data = await res.json();
+    if(!res.ok || !data.success) throw new Error(data.message || 'Failed to send');
+
+    gsap.to(signal, { width: '100%', duration: 0.4, ease: "power2.out", onComplete: () => {
+      gsap.to(signal, { opacity: 0, duration: 0.6, delay: 0.4, onComplete: () => { signal.style.width = '0'; signal.style.opacity = '1'; } });
+    }});
+    status.textContent = 'Message sent — thanks for reaching out, I will get back to you soon.';
+    status.className = 'ok';
+    e.target.reset();
+  }catch(err){
+    gsap.to(signal, { width: '0', duration: 0.3 });
+    status.textContent = 'Could not send message. Please try again or email me directly.';
+    status.className = 'err';
+  }finally{
+    btn.disabled = false;
+    btn.textContent = 'Send Message';
+  }
+});
+</script>
+
+</body>
+</html>

@@ -1,0 +1,25 @@
+# Dependencies
+node_modules/
+
+# Environment variables (contains real email credentials — never commit this)
+.env
+.env.local
+.env.*.local
+
+# Logs
+*.log
+npm-debug.log*
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Editor folders
+.vscode/
+.idea/
+
+# Build/deploy artifacts
+dist/
+build/
+.vercel/
+.netlify/
