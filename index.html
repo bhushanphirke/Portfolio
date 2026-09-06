@@ -690,7 +690,7 @@ loadLeetCode();
 loadGitHub();
 
 /* ---------------- Contact form ---------------- */
-const API_BASE = window.PORTFOLIO_API_BASE || 'https://portfolio-59lp.onrender.com';
+
 
 document.getElementById('contact-form').addEventListener('submit', async (e) => {
   e.preventDefault();
@@ -710,7 +710,7 @@ document.getElementById('contact-form').addEventListener('submit', async (e) => 
   gsap.to(signal, { width: '60%', duration: 0.8, ease: "power2.inOut" });
 
   try{
-    const res = await fetch(`${API_BASE}/api/contact`, {
+    const res = await fetch(`https://portfolio-59lp.onrender.com/api/contact`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(payload)
