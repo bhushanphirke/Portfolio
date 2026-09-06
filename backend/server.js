@@ -1,9 +1,9 @@
 require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
-const nodemailer = require('nodemailer');
+const { Resend } = require('resend');
 const rateLimit = require('express-rate-limit');
-
+const resend = new Resend(process.env.RESEND_API_KEY);
 const app = express();
 app.set('trust proxy', 1);
 const PORT = process.env.PORT || 5000;
@@ -23,13 +23,6 @@ const contactLimiter = rateLimit({
 
 // ---------- Mail transporter ----------
 // Uses Gmail + an App Password by default. See README.md for setup.
-const transporter = nodemailer.createTransport({
-  service: process.env.EMAIL_SERVICE || 'gmail',
-  auth: {
-    user: process.env.EMAIL_USER,
-    pass: process.env.EMAIL_PASS
-  }
-});
 
 // ---------- Helpers ----------
 function isValidEmail(email) {
@@ -68,21 +61,27 @@ app.post('/api/contact', contactLimiter, async (req, res) => {
     const safeEmail = escapeHtml(email);
     const safeMessage = escapeHtml(message).replace(/\n/g, '<br>');
 
-    await transporter.sendMail({
-      from: `"Portfolio Contact" <${process.env.EMAIL_USER}>`,
-      to: process.env.EMAIL_TO || process.env.EMAIL_USER,
-      replyTo: email,
-      subject: `New portfolio message from ${name}`,
-      html: `
-        <div style="font-family: sans-serif; font-size: 15px; color: #222;">
-          <h2>New message from your portfolio</h2>
-          <p><strong>Name:</strong> ${safeName}</p>
-          <p><strong>Email:</strong> ${safeEmail}</p>
-          <p><strong>Message:</strong></p>
-          <p style="white-space:pre-wrap;">${safeMessage}</p>
-        </div>
-      `
-    });
+   const { data, error } = await resend.emails.send({
+  from: 'onboarding@resend.dev',
+  to: 'bhushanphirke314@gmail.com',
+  replyTo: email,
+  subject: `New portfolio message from ${name}`,
+  html: `
+    <h2>New message from your portfolio</h2>
+    <p><strong>Name:</strong> ${safeName}</p>
+    <p><strong>Email:</strong> ${safeEmail}</p>
+    <p><strong>Message:</strong></p>
+    <p>${safeMessage}</p>
+  `
+});
+
+if (error) {
+  console.error('Resend error:', error);
+  return res.status(500).json({
+    success: false,
+    message: 'Email could not be sent.'
+  });
+}
 
     return res.json({ success: true, message: 'Message sent successfully.' });
   } catch (err) {
