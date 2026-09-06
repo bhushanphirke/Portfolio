@@ -24,11 +24,17 @@ const contactLimiter = rateLimit({
 // ---------- Mail transporter ----------
 // Uses Gmail + an App Password by default. See README.md for setup.
 const transporter = nodemailer.createTransport({
-  service: process.env.EMAIL_SERVICE || 'gmail',
+  host: 'smtp.gmail.com',
+  port: 465,
+  secure: true,
+  family: 4,
   auth: {
     user: process.env.EMAIL_USER,
     pass: process.env.EMAIL_PASS
-  }
+  },
+  connectionTimeout: 10000,
+  greetingTimeout: 10000,
+  socketTimeout: 10000
 });
 
 // ---------- Helpers ----------
