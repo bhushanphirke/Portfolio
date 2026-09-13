@@ -267,9 +267,124 @@
   a:focus-visible, button:focus-visible, input:focus-visible, textarea:focus-visible{
     outline:2px solid var(--accent);outline-offset:2px;
   }
+
+  /* ============================================================
+     Custom cursor
+  ============================================================ */
+  .custom-cursor{
+    position:fixed;top:0;left:0;
+    width:18px;height:18px;
+    border:1.5px solid var(--accent);
+    border-radius:50%;
+    pointer-events:none;
+    z-index:300;
+    transition:width .25s, height .25s, background-color .25s;
+    will-change:transform;
+  }
+  .custom-cursor.is-hover{
+    width:38px;height:38px;
+    background:var(--accent-dim);
+  }
+  @media (pointer:coarse){ .custom-cursor{display:none;} }
+
+  /* ============================================================
+     Skill icon swarm (cursor-follow -> docks in Skills section)
+  ============================================================ */
+  .skill-orbit-layer{position:fixed;inset:0;pointer-events:none;z-index:40;}
+  .skill-orbit-icon{
+    position:fixed;top:0;left:0;
+    width:34px;height:34px;
+    opacity:0;
+    pointer-events:none;
+    filter:drop-shadow(0 3px 8px rgba(0,0,0,0.45));
+    will-change:transform;
+  }
+  .skill-orbit-icon.docked{
+    position:static;
+    width:26px;height:26px;
+    filter:none;
+  }
+  .skills-icon-dock{
+    display:flex;flex-wrap:wrap;gap:14px;
+    margin-bottom:26px;padding-bottom:22px;
+    border-bottom:1px dashed var(--border);
+  }
+  .icon-slot{
+    width:46px;height:46px;
+    display:flex;align-items:center;justify-content:center;
+    background:var(--bg-2);border:1px solid var(--border);
+    border-radius:8px;
+  }
+
+  /* ============================================================
+     Hero entrance
+  ============================================================ */
+  .hero-top h1{opacity:0;}
+  .hero-top h1 .letter{display:inline-block;}
+  .hero-top .label{opacity:0;transform:translateY(8px);}
+  .hero-desc{opacity:0;transform:translateY(10px);}
+  .hero-links{opacity:0;transform:translateY(10px);}
+
+  /* ============================================================
+     Magnetic buttons
+  ============================================================ */
+  .btn{will-change:transform;}
+
+  /* ============================================================
+     Projects: pinned horizontal scroll (awwards-style reel)
+  ============================================================ */
+  .projects-pin-wrap{
+    position:relative;
+    height:100vh;
+    display:flex;align-items:center;
+    overflow:hidden;
+  }
+  .scroll-hint{
+    position:absolute;top:20px;left:50%;transform:translateX(-50%);
+    font-family:var(--head);font-size:12px;letter-spacing:0.1em;text-transform:uppercase;
+    color:var(--ink-dim);
+    display:flex;align-items:center;gap:8px;
+    z-index:5;
+  }
+  .scroll-hint .arrow{display:inline-block;animation:hint-nudge 1.4s ease-in-out infinite;}
+  @keyframes hint-nudge{0%,100%{transform:translateX(0);}50%{transform:translateX(6px);}}
+
+  .projects-track{
+    display:flex;gap:32px;
+    padding:0 8vw;
+    will-change:transform;
+  }
+  .project-slide{
+    flex:0 0 auto;
+    width:min(78vw, 640px);
+    padding:32px 34px;
+  }
+  .project-slide h3{font-size:19px;margin-bottom:10px;}
+  .project-slide .tagline{color:var(--ink-dim);font-size:14.5px;margin-bottom:18px;max-width:56ch;}
+  .project-slide ul{padding-left:20px;color:var(--ink-dim);font-size:14.5px;}
+  .project-slide ul li{margin-bottom:10px;}
+  .project-slide ul li::marker{color:var(--accent);}
+  .project-slide .stack-row{display:flex;flex-wrap:wrap;gap:8px;margin-top:18px;}
+
+  .h-progress{
+    position:absolute;left:8vw;right:8vw;bottom:34px;
+    height:2px;background:var(--border);
+  }
+  .h-progress span{display:block;height:100%;width:0%;background:var(--accent);}
+
+  @media(max-width:760px){
+    .projects-pin-wrap{height:auto;display:block;}
+    .scroll-hint{display:none;}
+    .projects-track{flex-direction:column;padding:0;gap:20px;}
+    .project-slide{width:100%;}
+    .h-progress{display:none;}
+  }
 </style>
 </head>
 <body>
+
+<div class="custom-cursor" id="custom-cursor"></div>
+<div class="skill-orbit-layer" id="skill-orbit-layer" aria-hidden="true"></div>
 
 <header>
   <div class="titleblock">
@@ -371,6 +486,7 @@
     <div class="underline" data-underline></div>
     <div class="panel reveal-panel">
       <div style="padding:26px 28px;">
+        <div class="skills-icon-dock" id="skills-icon-dock"></div>
         <div class="skill-groups">
           <div class="skill-group">
             <div class="glabel">Frontend</div>
@@ -436,86 +552,65 @@
       <span class="sheet">SHEET 05/05</span>
     </div>
     <div class="underline" data-underline></div>
-
-    <div class="panel project reveal-panel" id="proj-1">
-      <div class="project-head" onclick="toggleProject('proj-1')">
-        <div>
-          <h3>Smart Attendance Management System</h3>
-          <p class="tagline">Role-based attendance platform for students, teachers, and admins with automated absence emails and PDF attendance records.</p>
-        </div>
-        <span class="project-toggle">+</span>
-      </div>
-      <div class="project-body">
-        <div class="project-body-inner">
-          <ul>
-            <li>Separate dashboards for students, teachers, and admins — students view attendance, teachers mark it, admins onboard students and teachers.</li>
-            <li>Attendance records can be exported as PDF for any custom start and end date range.</li>
-            <li>Teachers can send absence-notification emails to students directly from the dashboard with one click, powered by Azure Function App for mail delivery.</li>
-            <li>Attendance is tracked per subject, so each subject maintains its own independent record.</li>
-          </ul>
-          <div class="stack-row">
-            <span class="tag">Node.js</span><span class="tag">Express.js</span><span class="tag">MongoDB</span>
-            <span class="tag">Azure Functions</span><span class="tag">HTML/CSS</span>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <div class="panel project reveal-panel" id="proj-2">
-      <div class="project-head" onclick="toggleProject('proj-2')">
-        <div>
-          <h3>InfoX — Smart Matrix Display System</h3>
-          <p class="tagline">Real-time classroom matrix display that syncs timetables, lecture reminders, and live announcements.</p>
-        </div>
-        <span class="project-toggle">+</span>
-      </div>
-      <div class="project-body">
-        <div class="project-body-inner">
-          <ul>
-            <li>RTC module senses real-time clock data to keep the classroom matrix display in sync with the actual schedule.</li>
-            <li>A dedicated companion app lets staff update the timetable, which is then reflected on the matrix display automatically.</li>
-            <li>Integrated notification system alerts teachers 10 minutes before their lecture is due to start.</li>
-            <li>Built-in real-time announcement system for classroom-wide updates.</li>
-          </ul>
-          <div class="stack-row">
-            <span class="tag">Embedded Systems</span><span class="tag">RTC Module</span><span class="tag">Real-time Sync</span>
-          </div>
-        </div>
-      </div>
-    </div>
-     
-    <div class="panel project reveal-panel" id="proj-3">
-  <div class="project-head" onclick="toggleProject('proj-3')">
-    <div>
-      <h3>Personal Portfolio Website</h3>
-      <p class="tagline">Responsive personal portfolio with a working contact system and modern interactive design.</p>
-    </div>
-    <span class="project-toggle">+</span>
   </div>
 
-  <div class="project-body">
-    <div class="project-body-inner">
-      <ul>
-        <li>Designed and developed a responsive portfolio website to showcase my skills, projects, and achievements.</li>
-        <li>Built a backend contact system using Node.js and Express.js to handle user messages securely.</li>
-        <li>Integrated Resend API for reliable email delivery from the contact form.</li>
-        <li>Added input validation and rate limiting to improve the security and reliability of the application.</li>
-        <li>Deployed the project online using Render and Vercel.</li>
-      </ul>
+  <div class="projects-pin-wrap" id="projects-pin-wrap">
+    <div class="scroll-hint" id="scroll-hint"><span>Scroll to explore</span><span class="arrow">&rarr;</span></div>
 
-      <div class="stack-row">
-        <span class="tag">HTML</span>
-        <span class="tag">CSS</span>
-        <span class="tag">JavaScript</span>
-        <span class="tag">Node.js</span>
-        <span class="tag">Express.js</span>
-        <span class="tag">Resend</span>
+    <div class="projects-track" id="projects-track">
+
+      <div class="panel project-slide" id="proj-1">
+        <h3>Smart Attendance Management System</h3>
+        <p class="tagline">Role-based attendance platform for students, teachers, and admins with automated absence emails and PDF attendance records.</p>
+        <ul>
+          <li>Separate dashboards for students, teachers, and admins — students view attendance, teachers mark it, admins onboard students and teachers.</li>
+          <li>Attendance records can be exported as PDF for any custom start and end date range.</li>
+          <li>Teachers can send absence-notification emails to students directly from the dashboard with one click, powered by Azure Function App for mail delivery.</li>
+          <li>Attendance is tracked per subject, so each subject maintains its own independent record.</li>
+        </ul>
+        <div class="stack-row">
+          <span class="tag">Node.js</span><span class="tag">Express.js</span><span class="tag">MongoDB</span>
+          <span class="tag">Azure Functions</span><span class="tag">HTML/CSS</span>
+        </div>
       </div>
+
+      <div class="panel project-slide" id="proj-2">
+        <h3>InfoX — Smart Matrix Display System</h3>
+        <p class="tagline">Real-time classroom matrix display that syncs timetables, lecture reminders, and live announcements.</p>
+        <ul>
+          <li>RTC module senses real-time clock data to keep the classroom matrix display in sync with the actual schedule.</li>
+          <li>A dedicated companion app lets staff update the timetable, which is then reflected on the matrix display automatically.</li>
+          <li>Integrated notification system alerts teachers 10 minutes before their lecture is due to start.</li>
+          <li>Built-in real-time announcement system for classroom-wide updates.</li>
+        </ul>
+        <div class="stack-row">
+          <span class="tag">Embedded Systems</span><span class="tag">RTC Module</span><span class="tag">Real-time Sync</span>
+        </div>
+      </div>
+
+      <div class="panel project-slide" id="proj-3">
+        <h3>Personal Portfolio Website</h3>
+        <p class="tagline">Responsive personal portfolio with a working contact system and modern interactive design.</p>
+        <ul>
+          <li>Designed and developed a responsive portfolio website to showcase my skills, projects, and achievements.</li>
+          <li>Built a backend contact system using Node.js and Express.js to handle user messages securely.</li>
+          <li>Integrated Resend API for reliable email delivery from the contact form.</li>
+          <li>Added input validation and rate limiting to improve the security and reliability of the application.</li>
+          <li>Deployed the project online using Render and Vercel.</li>
+        </ul>
+        <div class="stack-row">
+          <span class="tag">HTML</span>
+          <span class="tag">CSS</span>
+          <span class="tag">JavaScript</span>
+          <span class="tag">Node.js</span>
+          <span class="tag">Express.js</span>
+          <span class="tag">Resend</span>
+        </div>
+      </div>
+
     </div>
-  </div>
-</div>
 
-
+    <div class="h-progress"><span id="h-progress-fill"></span></div>
   </div>
 </section>
 
@@ -766,6 +861,197 @@ document.getElementById('contact-form').addEventListener('submit', async (e) => 
     btn.textContent = 'Send Message';
   }
 });
+
+/* =====================================================
+   NEW: custom cursor, magnetic buttons, hero letter
+   reveal, cursor-follow skill-icon swarm that docks
+   into the Skills section, and pinned horizontal
+   scroll for Projects.
+===================================================== */
+const hasFinePointer = window.matchMedia('(pointer: fine)').matches;
+
+/* ---- Custom cursor ---- */
+(function initCursor(){
+  const cursor = document.getElementById('custom-cursor');
+  if(!hasFinePointer){ cursor.style.display = 'none'; return; }
+
+  const curX = gsap.quickTo(cursor, 'x', { duration: 0.35, ease: 'power3.out' });
+  const curY = gsap.quickTo(cursor, 'y', { duration: 0.35, ease: 'power3.out' });
+
+  window.addEventListener('mousemove', (e) => {
+    curX(e.clientX - 9);
+    curY(e.clientY - 9);
+  });
+
+  document.querySelectorAll('a, button, .project-slide, .stat-card, .icon-slot').forEach(el => {
+    el.addEventListener('mouseenter', () => cursor.classList.add('is-hover'));
+    el.addEventListener('mouseleave', () => cursor.classList.remove('is-hover'));
+  });
+})();
+
+/* ---- Magnetic buttons ---- */
+if(hasFinePointer){
+  document.querySelectorAll('.btn').forEach(btn => {
+    btn.addEventListener('mousemove', (e) => {
+      const r = btn.getBoundingClientRect();
+      const relX = e.clientX - r.left - r.width / 2;
+      const relY = e.clientY - r.top - r.height / 2;
+      gsap.to(btn, { x: relX * 0.25, y: relY * 0.35, duration: 0.3, ease: 'power3.out' });
+    });
+    btn.addEventListener('mouseleave', () => {
+      gsap.to(btn, { x: 0, y: 0, duration: 0.5, ease: 'elastic.out(1,0.4)' });
+    });
+  });
+}
+
+/* ---- Hero heading: letter-by-letter reveal ---- */
+(function heroLetters(){
+  const heroTitle = document.querySelector('.hero-top h1');
+  if(!heroTitle) return;
+  const rawText = heroTitle.textContent;
+  heroTitle.innerHTML = rawText.split('').map(ch =>
+    `<span class="letter">${ch === ' ' ? '&nbsp;' : ch}</span>`
+  ).join('');
+  heroTitle.style.opacity = '1';
+  gsap.set('.hero-top h1 .letter', { opacity: 0, y: 26 });
+
+  gsap.timeline({ delay: 0.15 })
+    .to('.hero-top .label', { opacity: 1, y: 0, duration: 0.5, ease: 'power2.out' })
+    .to('.hero-top h1 .letter', { opacity: 1, y: 0, duration: 0.55, stagger: 0.028, ease: 'power3.out' }, '-=0.25')
+    .to('.hero-desc', { opacity: 1, y: 0, duration: 0.5, ease: 'power2.out' }, '-=0.2')
+    .to('.hero-links', { opacity: 1, y: 0, duration: 0.5, ease: 'power2.out' }, '-=0.3');
+})();
+
+/* ---- Cursor-follow skill icon swarm -> docks into Skills section ---- */
+(function skillOrbit(){
+  const SKILL_ICONS = [
+    { name: 'HTML',         src: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/html5/html5-original.svg' },
+    { name: 'CSS',          src: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/css3/css3-original.svg' },
+    { name: 'Node.js',      src: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/nodejs/nodejs-original.svg' },
+    { name: 'Express.js',   src: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/express/express-original.svg' },
+    { name: 'Spring Boot',  src: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/spring/spring-original.svg' },
+    { name: 'Java',         src: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/java/java-original.svg' },
+    { name: 'MongoDB',      src: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/mongodb/mongodb-original.svg' },
+    { name: 'Postgres SQL', src: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/postgresql/postgresql-original.svg' },
+    { name: 'C++',          src: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/cplusplus/cplusplus-original.svg' }
+  ];
+
+  const orbitLayer = document.getElementById('skill-orbit-layer');
+  const dock = document.getElementById('skills-icon-dock');
+  if(!orbitLayer || !dock) return;
+
+  const orbitEls = SKILL_ICONS.map((skill, i) => {
+    const img = document.createElement('img');
+    img.src = skill.src;
+    img.alt = skill.name;
+    img.title = skill.name;
+    img.className = 'skill-orbit-icon';
+    img.onerror = () => { img.style.display = 'none'; };
+    orbitLayer.appendChild(img);
+
+    const slot = document.createElement('div');
+    slot.className = 'icon-slot';
+    dock.appendChild(slot);
+
+    const angle = (i / SKILL_ICONS.length) * Math.PI * 2;
+    const startX = window.innerWidth / 2 + Math.cos(angle) * 70 - 17;
+    const startY = window.innerHeight * 0.32 + Math.sin(angle) * 70 - 17;
+    gsap.set(img, { x: startX, y: startY });
+
+    return { img, slot, angle, radius: 42 + (i % 3) * 16 };
+  });
+
+  /* gentle fade-in on load, regardless of device type */
+  gsap.to(orbitEls.map(o => o.img), { opacity: 0.9, duration: 0.6, stagger: 0.04, delay: 1.0 });
+
+  let mouseX = window.innerWidth / 2;
+  let mouseY = window.innerHeight * 0.32;
+  let docked = false;
+
+  const setters = orbitEls.map(o => ({
+    x: gsap.quickTo(o.img, 'x', { duration: (0.25 + Math.random() * 0.35), ease: 'power3.out' }),
+    y: gsap.quickTo(o.img, 'y', { duration: (0.25 + Math.random() * 0.35), ease: 'power3.out' })
+  }));
+
+  if(hasFinePointer){
+    window.addEventListener('mousemove', (e) => {
+      mouseX = e.clientX;
+      mouseY = e.clientY;
+    });
+
+    gsap.ticker.add(() => {
+      if(docked) return;
+      const t = performance.now() * 0.0006;
+      orbitEls.forEach((o, i) => {
+        const ang = o.angle + t;
+        setters[i].x(mouseX + Math.cos(ang) * o.radius - 17);
+        setters[i].y(mouseY + Math.sin(ang) * o.radius - 17);
+      });
+    });
+  }
+
+  /* Dock into the Skills section on first arrival (manual FLIP, so
+     icons become real in-flow elements and scroll naturally afterward) */
+  ScrollTrigger.create({
+    trigger: '#skills',
+    start: 'top 70%',
+    once: true,
+    onEnter: () => {
+      docked = true;
+      orbitEls.forEach((o) => {
+        const first = o.img.getBoundingClientRect();
+        o.img.classList.add('docked');
+        o.img.style.position = 'static';
+        o.slot.appendChild(o.img);
+        gsap.set(o.img, { clearProps: 'transform' });
+        const last = o.img.getBoundingClientRect();
+        const dx = first.left - last.left;
+        const dy = first.top - last.top;
+        gsap.fromTo(o.img,
+          { x: dx, y: dy, opacity: 0.9 },
+          { x: 0, y: 0, opacity: 1, duration: 0.9, ease: 'power3.inOut' }
+        );
+      });
+    }
+  });
+})();
+
+/* ---- Projects: pinned horizontal scroll (desktop only) ---- */
+mm.add("(min-width: 761px)", () => {
+  const track = document.getElementById('projects-track');
+  const wrap = document.getElementById('projects-pin-wrap');
+  const progressFill = document.getElementById('h-progress-fill');
+  const hint = document.getElementById('scroll-hint');
+  if(!track || !wrap) return;
+
+  const getScrollAmount = () => track.scrollWidth - window.innerWidth;
+
+  const projTween = gsap.to(track, {
+    x: () => -getScrollAmount(),
+    ease: 'none',
+    scrollTrigger: {
+      trigger: wrap,
+      start: 'top top',
+      end: () => '+=' + getScrollAmount(),
+      scrub: 1,
+      pin: true,
+      invalidateOnRefresh: true,
+      onUpdate: (self) => {
+        gsap.set(progressFill, { width: (self.progress * 100) + '%' });
+        if(self.progress > 0.03 && hint) gsap.to(hint, { opacity: 0, duration: 0.3 });
+      }
+    }
+  });
+
+  return () => { projTween.kill(); };
+});
+
+mm.add("(max-width: 760px)", () => {
+  const track = document.getElementById('projects-track');
+  if(track) gsap.set(track, { x: 0 });
+});
+
+window.addEventListener('load', () => ScrollTrigger.refresh());
 </script>
  
 
