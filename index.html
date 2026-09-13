@@ -966,7 +966,11 @@ if(hasFinePointer){
 
   let mouseX = window.innerWidth / 2;
   let mouseY = window.innerHeight * 0.32;
-  let docked = false;
+
+  /* state machine: 'following' | 'docked' | 'hidden'
+     tweening pauses the follow-ticker while a dock/undock transition animates */
+  let mode = 'following';
+  let tweening = false;
 
   const setters = orbitEls.map(o => ({
     x: gsap.quickTo(o.img, 'x', { duration: (0.25 + Math.random() * 0.35), ease: 'power3.out' }),
@@ -980,7 +984,7 @@ if(hasFinePointer){
     });
 
     gsap.ticker.add(() => {
-      if(docked) return;
+      if(mode !== 'following' || tweening) return;
       const t = performance.now() * 0.0006;
       orbitEls.forEach((o, i) => {
         const ang = o.angle + t;
@@ -990,29 +994,79 @@ if(hasFinePointer){
     });
   }
 
-  /* Dock into the Skills section on first arrival (manual FLIP, so
-     icons become real in-flow elements and scroll naturally afterward) */
+  /* following -> docked (icons fly into the Skills icon row, become real in-flow elements) */
+  function dockIcons(){
+    if(mode !== 'following' || tweening) return;
+    mode = 'docked';
+    tweening = true;
+    orbitEls.forEach((o) => {
+      const first = o.img.getBoundingClientRect();
+      o.img.classList.add('docked');
+      o.img.style.position = 'static';
+      o.slot.appendChild(o.img);
+      gsap.set(o.img, { clearProps: 'transform' });
+      const last = o.img.getBoundingClientRect();
+      const dx = first.left - last.left;
+      const dy = first.top - last.top;
+      gsap.fromTo(o.img,
+        { x: dx, y: dy, opacity: 0.9 },
+        { x: 0, y: 0, opacity: 1, duration: 0.9, ease: 'power3.inOut' }
+      );
+    });
+    gsap.delayedCall(0.95, () => { tweening = false; });
+  }
+
+  /* docked -> following (icons leave the dock and resume trailing the cursor) */
+  function undockIcons(){
+    if(mode !== 'docked' || tweening) return;
+    mode = 'following';
+    tweening = true;
+    orbitEls.forEach((o) => {
+      const first = o.img.getBoundingClientRect();
+      o.img.classList.remove('docked');
+      o.img.style.position = 'fixed';
+      orbitLayer.appendChild(o.img);
+      gsap.set(o.img, { clearProps: 'transform' });
+      gsap.fromTo(o.img,
+        { x: first.left, y: first.top, opacity: 0.9 },
+        { x: mouseX - 17, y: mouseY - 17, opacity: 1, duration: 0.8, ease: 'power3.inOut' }
+      );
+    });
+    gsap.delayedCall(0.85, () => { tweening = false; });
+  }
+
+  /* following -> hidden (icons fade out while you're in the contact form) */
+  function hideIcons(){
+    if(mode !== 'following') return;
+    mode = 'hidden';
+    gsap.to(orbitEls.map(o => o.img), { opacity: 0, duration: 0.4, ease: 'power2.out' });
+  }
+
+  /* hidden -> following (icons fade back in and resume trailing the cursor) */
+  function showIcons(){
+    if(mode !== 'hidden') return;
+    mode = 'following';
+    gsap.to(orbitEls.map(o => o.img), { opacity: 0.9, duration: 0.5, ease: 'power2.out' });
+  }
+
   ScrollTrigger.create({
     trigger: '#skills',
     start: 'top 70%',
-    once: true,
-    onEnter: () => {
-      docked = true;
-      orbitEls.forEach((o) => {
-        const first = o.img.getBoundingClientRect();
-        o.img.classList.add('docked');
-        o.img.style.position = 'static';
-        o.slot.appendChild(o.img);
-        gsap.set(o.img, { clearProps: 'transform' });
-        const last = o.img.getBoundingClientRect();
-        const dx = first.left - last.left;
-        const dy = first.top - last.top;
-        gsap.fromTo(o.img,
-          { x: dx, y: dy, opacity: 0.9 },
-          { x: 0, y: 0, opacity: 1, duration: 0.9, ease: 'power3.inOut' }
-        );
-      });
-    }
+    end: 'bottom 30%',
+    onEnter: dockIcons,
+    onEnterBack: dockIcons,
+    onLeave: undockIcons,
+    onLeaveBack: undockIcons
+  });
+
+  ScrollTrigger.create({
+    trigger: '#contact',
+    start: 'top 80%',
+    end: 'bottom 20%',
+    onEnter: hideIcons,
+    onEnterBack: hideIcons,
+    onLeave: showIcons,
+    onLeaveBack: showIcons
   });
 })();
 
